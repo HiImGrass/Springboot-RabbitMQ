@@ -77,7 +77,7 @@ RabbitMQSpring/
 │       └── resources/
 │           └── application.properties
 │
-└── rabbitmq-worker/
+└── rabbitmq-worker/ (TÔI CHƯA LÀM CÁI NÀY ÂN CÓ THỂ CODE THÊM WORKER TẠI ĐÂY)
     ├── pom.xml
     └── src/main/
         ├── java/
@@ -122,15 +122,21 @@ services:
   rabbitmq:
     image: rabbitmq:4-management
     container_name: rabbitmq-demo
-    restart: unless-stopped
-    environment:
-      RABBITMQ_DEFAULT_USER: demo
-      RABBITMQ_DEFAULT_PASS: demo123
+    hostname: rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: demo
+      RABBITMQ_DEFAULT_PASS: demo123
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
 
 volumes:
   rabbitmq_data:
